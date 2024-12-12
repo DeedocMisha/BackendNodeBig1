@@ -3,6 +3,9 @@ import {ApiProperty} from "@nestjs/swagger";
 import {User} from "../users/users.model";
 import {UserRoles} from "./user-roles.model";
 
+//Для табл Roles!!!!!
+//Есть все кроме дат!
+
 interface RoleCreationAttrs {
     value: string;
     description: string;
@@ -11,7 +14,7 @@ interface RoleCreationAttrs {
 @Table({tableName: 'roles'})
 export class Role extends Model<Role, RoleCreationAttrs> {
 
-    @ApiProperty({example: '1', description: 'Уникальный идентификатор'})
+    @ApiProperty({example: '1', description: 'Уникальный идентификатор'}) //Для Swager
     @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;
 
@@ -23,6 +26,6 @@ export class Role extends Model<Role, RoleCreationAttrs> {
     @Column({type: DataType.STRING, allowNull: false})
     description: string;
 
-    @BelongsToMany(() => User, () => UserRoles)
-    users: User[];
+    @BelongsToMany(() => User, () => UserRoles) //Связь М:М с табл User и UserRoles
+    users: User[];//Значит что 1 польз может иметь много ролей
 }

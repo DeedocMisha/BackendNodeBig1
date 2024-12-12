@@ -7,13 +7,13 @@ import {User} from "../users/users.model";
 import {UserRoles} from "./user-roles.model";
 
 @Module({
-  providers: [RolesService],
-  controllers: [RolesController],
+  providers: [RolesService],//Определяем провайдеры для модуля которые могут инъектироваться в другие компоненты
+  controllers: [RolesController],//Контроллеры для обработки входящих HTTP-запросов
   imports: [
     SequelizeModule.forFeature([Role, User, UserRoles])
   ],
   exports: [
-    RolesService
+    RolesService // Экспортируем сервис, чтобы он был доступен в других модулях
   ]
 })
-export class RolesModule {}
+export class RolesModule {} // Экспортируем класс модуля для его использования в других частях приложения

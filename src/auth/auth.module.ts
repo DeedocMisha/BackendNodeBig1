@@ -1,24 +1,24 @@
-import {forwardRef, Module} from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import {UsersModule} from "../users/users.module";
-import {JwtModule} from "@nestjs/jwt";
+import { forwardRef, Module } from '@nestjs/common'; // Импортируем необходимые функции и классы из NestJS
+import { AuthController } from './auth.controller'; // Импортируем контроллер аутентификации
+import { AuthService } from './auth.service'; // Импортируем сервис аутентификации
+import { UsersModule } from "../users/users.module"; // Импортируем модуль пользователей
+import { JwtModule } from "@nestjs/jwt"; // Импортируем модуль JWT для работы с JSON Web Tokens
 
 @Module({
-  controllers: [AuthController],
-  providers: [AuthService],
-  imports: [
-      forwardRef(() => UsersModule),
-      JwtModule.register({
-        secret: process.env.PRIVATE_KEY || 'SECRET',
-        signOptions: {
-          expiresIn: '24h'
-        }
-      })
-  ],
+    controllers: [AuthController], // Указываем контроллер аутентификации
+    providers: [AuthService], // Указываем сервис аутентификации
+    imports: [
+        forwardRef(() => UsersModule), // Используем forwardRef для избежания циклических зависимостей с UsersModule
+        JwtModule.register({
+            secret: process.env.PRIVATE_KEY || 'SECRET', // Указываем секретный ключ для подписи токенов
+            signOptions: {
+                expiresIn: '24h' // Указываем время действия токена (24 часа)
+            }
+        })
+    ],
     exports: [
-        AuthService,
-        JwtModule
+        AuthService, // Экспортируем AuthService, чтобы он был доступен в других модулях
+        JwtModule // Экспортируем JwtModule для использования в других модулях
     ]
 })
-export class AuthModule {}
+export class AuthModule {} // Объявляем класс AuthModule как модуль

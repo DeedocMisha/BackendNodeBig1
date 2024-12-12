@@ -13,26 +13,34 @@ import { FilesModule } from './files/files.module';
 import {ServeStaticModule} from "@nestjs/serve-static";
 import * as path from 'path';
 
+//Обьявляем модуль
 @Module({
+    //Обьявл пустой массив контроллеров
     controllers: [],
+    //Empty massiv провайдеров
     providers: [],
+    //Импортируем модули
     imports: [
+        //for root - метод настраивает корневую конфигурацию модуля для приложения
         ConfigModule.forRoot({
-           envFilePath: `.${process.env.NODE_ENV}.env`
+           envFilePath: `.${process.env.NODE_ENV}.env`//Настройки оэнвов
         }),
+        // Настройка модуля для обслуживания статических файлов
         ServeStaticModule.forRoot({
-            rootPath: path.resolve( __dirname, 'static'),
+            rootPath: path.resolve( __dirname, 'static'),// Указывает директорию, из которой будут обслуживаться статические файлы
         }),
+        //Настройка squelize для всех польз
         SequelizeModule.forRoot({
-            dialect: 'postgres',
+            dialect: 'postgres', //Выбрал диалект базы данных
             host: process.env.POSTGRES_HOST,
             port: Number(process.env.POSTGRESS_PORT),
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRESS_PASSWORD,
             database: process.env.POSTGRES_DB,
-            models: [User, Role, UserRoles, Post],
-            autoLoadModels: true
+            models: [User, Role, UserRoles, Post], //Загружаю модели бд.
+            autoLoadModels: true // Автоматическая загрузка моделей
         }),
+        //Импортируем модели для бд
         UsersModule,
         RolesModule,
         AuthModule,

@@ -9,13 +9,13 @@ export class AuthController {
 
     constructor(private authService: AuthService) {}
 
-    @Post('/login')
-    login(@Body() userDto: CreateUserDto) {
-        return this.authService.login(userDto)
+    @Post('/login') //Определяем путь
+    login(@Body() userDto: CreateUserDto) {//Получем данные из Тела и проверяем с ДТО
+        return this.authService.login(userDto) //Передаем и возвращаем данные из ф-ии
     }
 
-    @Post('/registration')
-    registration(@Body() userDto: CreateUserDto) {
-        return this.authService.registration(userDto)
+    @Post('/registration') //Определяем путь
+    registration(@Body() userDto: CreateUserDto) { //Получем данные из Тела и проверяем с ДТО
+        return this.authService.registration(userDto)//Передаем и возвращаем данные из ф-ии
     }
 }

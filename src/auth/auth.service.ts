@@ -8,12 +8,27 @@ import {User} from "../users/users.model";
 @Injectable()
 export class AuthService {
 
-    constructor(private userService: UsersService,
-                private jwtService: JwtService) {}
+    constructor(private userService: UsersService, //Импортируем ф-ии из юзерсервис
+                private jwtService: JwtService) {} //импортируем jwt
 
     async login(userDto: CreateUserDto) {
         const user = await this.validateUser(userDto)
-        return this.generateToken(user)
+        return this.generateToken(user)//Ф-я генерации токена для авториз пользователя
+    }
+
+    private async validateUser(userDto: CreateUserDto) {
+        const user = await this.userService.getUserByEmail(userDto.email);
+        const passwordEquals = await bcrypt.compare(userDto.password, user.password); //Сравнивает пароли
+        if (user && passwordEquals) {
+            return user;
+        }
+        throw new UnauthorizedException({message: 'Некорректный емайл или пароль'})
+    }
+    private async generateToken(user: User) {
+        const payload = {email: user.email, id: user.id, roles: user.roles} //Импортир все данные пользователя
+        return {
+            token: this.jwtService.sign(payload)//Генерим токен ко всем данным пользователя
+        }
     }
 
     async registration(userDto: CreateUserDto) {
@@ -21,24 +36,8 @@ export class AuthService {
         if (candidate) {
             throw new HttpException('Пользователь с таким email существует', HttpStatus.BAD_REQUEST);
         }
-        const hashPassword = await bcrypt.hash(userDto.password, 5);
-        const user = await this.userService.createUser({...userDto, password: hashPassword})
-        return this.generateToken(user)
-    }
-
-    private async generateToken(user: User) {
-        const payload = {email: user.email, id: user.id, roles: user.roles}
-        return {
-            token: this.jwtService.sign(payload)
-        }
-    }
-
-    private async validateUser(userDto: CreateUserDto) {
-        const user = await this.userService.getUserByEmail(userDto.email);
-        const passwordEquals = await bcrypt.compare(userDto.password, user.password);
-        if (user && passwordEquals) {
-            return user;
-        }
-        throw new UnauthorizedException({message: 'Некорректный емайл или пароль'})
+        const hashPassword = await bcrypt.hash(userDto.password, 5);//Хэшируем пароль если польз нет
+        const user = await this.userService.createUser({...userDto, password: hashPassword}) //Сощл польз с хэш паролем и ланными из userdto на 3 каталога назад
+        return this.generateToken(user)//Возвращается токен польз с его всеми данными!!!
     }
 }
